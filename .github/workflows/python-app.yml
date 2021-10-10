@@ -21,13 +21,13 @@ jobs:
       with:
         python-version: 3.9
     - name: Install dependencies
-      working-directory: ./app
+      working-directory: ./src
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
-      working-directory: ./app
+      working-directory: ./src
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
