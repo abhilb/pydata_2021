@@ -20,11 +20,11 @@ class LogisticRegresssionModel(ClassificationModel):
         self.model.fit(self.X_train, self.y_train)
         return super().create_model()
 
-    def to_onnx(self):
+    def to_onnx(self, model_path: Path):
         initial_type = [("float_input", FloatTensorType([None, 4]))]
         onx = convert_sklearn(self.model, initial_types=initial_type)
 
-        with open("log_reg_model.onnx", "wb") as f:
+        with open(str(model_path), "wb") as f:
             f.write(onx.SerializeToString())
 
-        return super().to_onnx()
+        return super().to_onnx(model_path)

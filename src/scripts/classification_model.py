@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from sklearn.datasets import fetch_openml
 from sklearn.model_selection import train_test_split
@@ -39,5 +40,5 @@ class ClassificationModel(ABC):
         pass
 
     @abstractmethod
-    def to_onnx(self):
+    def to_onnx(self, model_path: Path):
         pass
