@@ -20,6 +20,9 @@ class LogisticRegresssionModel(ClassificationModel):
         self.model.fit(self.X_train, self.y_train)
         return super().create_model()
 
+    def get_score(self) -> float:
+        return super().get_score()
+
     def to_onnx(self, model_path: Path):
         initial_type = [("float_input", FloatTensorType([None, 4]))]
         onx = convert_sklearn(self.model, initial_types=initial_type)
