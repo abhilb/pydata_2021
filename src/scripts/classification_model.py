@@ -40,5 +40,9 @@ class ClassificationModel(ABC):
         pass
 
     @abstractmethod
+    def get_score(self) -> float:
+        return self.model.score(self.X_test, self.y_test)
+
+    @abstractmethod
     def to_onnx(self, model_path: Path):
         pass
