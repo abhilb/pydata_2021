@@ -1,17 +1,14 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "spdlog/spdlog.h"
-
 #include "imgui.h"
 #include "imgui_impl_opengl2.h"
 #include "imgui_impl_sdl.h"
+#include "spdlog/spdlog.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) !=
-        0)
-    {
+        0) {
         spdlog::error("Error: {}\n", SDL_GetError());
         return -1;
     }
@@ -26,11 +23,11 @@ int main(int argc, char **argv)
         (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
                           SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window *window =
-        SDL_CreateWindow("Mukham", SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED, 1680, 800, window_flags);
+        SDL_CreateWindow("Digits", SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED, 800, 800, window_flags);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
-    SDL_GL_SetSwapInterval(1); // Enable vsync
+    SDL_GL_SetSwapInterval(1);  // Enable vsync
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -48,14 +45,11 @@ int main(int argc, char **argv)
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     bool done = false;
-    while (!done)
-    {
+    while (!done) {
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
-                done = true;
+            if (event.type == SDL_QUIT) done = true;
             if (event.type == SDL_WINDOWEVENT &&
                 event.window.event == SDL_WINDOWEVENT_CLOSE &&
                 event.window.windowID == SDL_GetWindowID(window))
@@ -67,6 +61,9 @@ int main(int argc, char **argv)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
         {
+            ImGui::Begin("Canvas");
+            {}
+            ImGui::End();
         }
 
         // Rendering
