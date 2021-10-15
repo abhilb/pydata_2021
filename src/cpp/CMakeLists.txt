@@ -23,6 +23,7 @@ endif()
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(OpenCV REQUIRED)
 
 set(SRC_FILES main.cpp
               imgui/imgui.cpp
@@ -39,6 +40,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC "imgui")
 target_include_directories(${PROJECT_NAME} PUBLIC "imgui/backends")
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${OpencV_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})

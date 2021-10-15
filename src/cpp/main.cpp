@@ -6,7 +6,12 @@
 #include "imgui_impl_sdl.h"
 #include "spdlog/spdlog.h"
 
-int main(int argc, char **argv) {
+#include "opencv2/core.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/imgproc.hpp"
+
+int main(int argc, char **argv)
+{
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) !=
         0) {
         spdlog::error("Error: {}\n", SDL_GetError());
@@ -64,7 +69,12 @@ int main(int argc, char **argv) {
             ImGui::Begin("Canvas");
             {
                 static ImVector<ImVec2> points;
+                static bool predict, clear;
 
+                predict = ImGui::Button("Predict");
+                ImGui::SameLine();
+                clear = ImGui::Button("Clear");
+                
                 // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
                 ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();    // ImDrawList API uses screen coordinates!
                 ImVec2 canvas_sz = ImGui::GetContentRegionAvail(); // Resize canvas to what's available
@@ -95,7 +105,20 @@ int main(int argc, char **argv) {
                 for (int n = 0; n < points.Size; n++)
                     draw_list->AddCircle(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 1.0, IM_COL32(0, 255, 0, 255), 0, 10.0f);
 
-                draw_list->PopClipRect();                
+                draw_list->PopClipRect();                                                
+
+                if(predict)
+                {
+                    cv::Mat image = cv::Mat(canvas_sz.y, canvas_sz.x, CV_8UC1, cv::Scalar(255));
+                    spdlog::info("Image size: {}, {}", image.rows, image.cols);
+                    for (int n = 0; n < points.Size; n++)
+                        cv::circle(image, cv::Point(points[n].x, points[n].y), 1.0, cv::Scalar(0), 10);
+                    cv::imwrite("image.png", image);
+                }
+
+                if (clear)
+                    points.clear();
+
             }
             ImGui::End();
         }
