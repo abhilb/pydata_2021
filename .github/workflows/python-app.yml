@@ -4,10 +4,7 @@
 name: Python application
 
 on:
-  workflow_run:
-    branches: [main]
-    types: 
-      - requested
+  workflow_dispatch
 
 jobs:
   build:
