@@ -5,10 +5,8 @@ name: Python application
 
 on:
   workflow_run:
-    workflows: ["Python application"]
     branches: [main]
     types: 
-      - completed
       - requested
 
 jobs:
