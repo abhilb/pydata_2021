@@ -62,7 +62,41 @@ int main(int argc, char **argv) {
         ImGui::NewFrame();
         {
             ImGui::Begin("Canvas");
-            {}
+            {
+                static ImVector<ImVec2> points;
+
+                // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
+                ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();    // ImDrawList API uses screen coordinates!
+                ImVec2 canvas_sz = ImGui::GetContentRegionAvail(); // Resize canvas to what's available
+                if (canvas_sz.x < 50.0f)
+                    canvas_sz.x = 50.0f;
+                if (canvas_sz.y < 50.0f)
+                    canvas_sz.y = 50.0f;
+                ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+
+                // Draw border and background color
+                ImGuiIO &io = ImGui::GetIO();
+                ImDrawList *draw_list = ImGui::GetWindowDrawList();
+                draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+                draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+
+                // This will catch our interactions
+                ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+                const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+                const bool is_active = ImGui::IsItemActive();   // Held
+                const ImVec2 origin(canvas_p0.x, canvas_p0.y);  // Lock scrolled origin
+                const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
+                                
+                if (is_hovered && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+                    points.push_back(mouse_pos_in_canvas);
+
+                draw_list->PushClipRect(canvas_p0, canvas_p1, true);
+                
+                for (int n = 0; n < points.Size; n++)
+                    draw_list->AddCircle(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 1.0, IM_COL32(0, 255, 0, 255), 0, 10.0f);
+
+                draw_list->PopClipRect();                
+            }
             ImGui::End();
         }
 
