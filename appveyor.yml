@@ -1,5 +1,8 @@
 version: 1.0.{build}
 
+environment:
+- SDL2_DIR:  C:\sdl\SDL2-2.0.16
+
 image:
 - Visual Studio 2019
 
@@ -18,6 +21,16 @@ init:
 - echo %generator%
 
 before_build:
+- |-
+- set SDL_DIR=c:\sdl
+
+- |-
+    %DEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.16-VC.zip    
+    %DEPENDS% 7z x SDL2-devel-2.0.16-VC.zip > nul
+    %DEPENDS% copy SDL2-2.0.16\%ARCH%\include\SDL2\* %SDL_DIR%\include\SDL2 > nul
+    %DEPENDS% copy SDL2-2.0.16\%ARCH%\lib\*.a %SDL_DIR%\lib > nul
+    %DEPENDS% copy SDL2-2.0.16\%ARCH%\bin\*.dll %SDL_DIR%\lib > nul
+
 - cmd: |-
     cd src
     cd cpp
