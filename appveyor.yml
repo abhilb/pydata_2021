@@ -1,0 +1,32 @@
+version: 1.0.{build}
+
+image:
+- Visual Studio 2019
+
+platform:
+- x64
+
+configuration:
+- Release
+
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- echo %arch%
+- echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 16 2019%arch%" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    cd src
+    cd cpp
+    mkdir build
+    cd build
+    cmake --version
+    cmake .. -G %generator%
+
+build:
+  project: DigitsDemo.sln
+  verbosity: minimal
+  parallel: true    
