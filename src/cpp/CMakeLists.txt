@@ -11,15 +11,19 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(ONNXRUNTIME_ROOTDIR "onnxruntime root dir")
+message(STATUS "ONNX RUNTIME DIR: ${ONNXRUNTIME_ROOTDIR}")
 
 if(NOT ONNXRUNTIME_ROOTDIR)
   if(WIN32)
     set(ONNXRUNTIME_ROOTDIR "C:/Program Files (x86)/onnxruntime")
   else()
-    include_directories("/usr/local/include/onnxruntime")
+    set(ONNXRUNTIME_ROOTDIR "/usr/local/include/onnxruntime")
   endif()
 endif()
+
+set(ONNX_INCLUDE_DIRS "${ONNXRUNTIME_ROOTDIR}/include"
+                      "${ONNXRUNTIME_ROOTDIR}/include/onnxruntime/core/session")
+set(ONNX_LIB_DIR "${ONNXRUNTIME_ROOTDIR}/lib")
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -41,7 +45,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC "imgui/backends")
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpencV_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ONNX_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} PUBLIC onnxruntime.lib)
+
+target_link_directories(${PROJECT_NAME} PUBLIC ${ONNX_LIB_DIR})
