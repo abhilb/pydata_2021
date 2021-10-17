@@ -3,8 +3,10 @@ from pathlib import Path
 
 from sklearn.datasets import fetch_openml
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.utils import check_random_state
+
+import random
+import numpy as np
 
 
 class ClassificationModel(ABC):
@@ -16,7 +18,6 @@ class ClassificationModel(ABC):
         super().__init__()
 
         self.train_samples = 5000
-
         X, y = fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
 
         random_state = check_random_state(0)
@@ -28,10 +29,6 @@ class ClassificationModel(ABC):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             X, y, train_size=self.train_samples, test_size=10000
         )
-
-        scaler = StandardScaler()
-        self.X_train = scaler.fit_transform(self.X_train)
-        self.X_test = scaler.transform(self.X_test)
 
         self.model = None
 
@@ -46,3 +43,9 @@ class ClassificationModel(ABC):
     @abstractmethod
     def to_onnx(self, model_path: Path):
         pass
+
+    def get_random_image(self):
+        idx = random.randint(0, self.y_test.shape[0])
+        img = np.reshape(self.X_test[idx], (28, 28))
+        img = img * 255
+        return img.astype(np.uint8)
