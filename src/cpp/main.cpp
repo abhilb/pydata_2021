@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <algorithm>
+#include <memory>
 
 // onnx includes
 #include <onnxruntime_cxx_api.h>
@@ -34,22 +35,33 @@ struct Digits_Random_Forest_Onnx
     int infer(digits_input& input)
     {
         std::vector<const char*> input_names = { "float_input" };
-        std::vector<const char*> output_names = { "output_label" };
+        std::vector<const char*> output_names = { "output_label" , "output_probability" };
                 
         Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);     
         auto input_size = input.size();
         auto input_tensor = Ort::Value::CreateTensor<float>(info, const_cast<float*>(input.data()), input_size, _input_shape.data(), _input_shape.size());
-        Ort::Value output_tensor{ nullptr };
 
-        session.Run(Ort::RunOptions{ nullptr }, input_names.data(), &input_tensor, 1, output_names.data(), &output_tensor, 1);
+        spdlog::info("Output tensor count: {}", session.GetOutputCount());
+
+        Ort::AllocatorWithDefaultOptions allocator;
+        spdlog::info("Output tensor[0] name: {}", session.GetOutputName(0, allocator));
+        spdlog::info("Output tensor[1] name: {}", session.GetOutputName(1, allocator));
+
+        std::vector<Ort::Value> ort_outputs = session.Run(Ort::RunOptions{ nullptr }, input_names.data(), &input_tensor, 1, output_names.data(), 2);
         
-        return 0;
+        auto type_info = ort_outputs[0].GetTensorTypeAndShapeInfo();
+        auto data_length = ort_outputs[0].GetStringTensorDataLength();
+        std::string result(data_length, '\0');
+        std::vector<size_t> offsets(type_info.GetElementCount());
+        ort_outputs[0].GetStringTensorContent((void*)result.data(), data_length, offsets.data(), offsets.size());
+
+        return std::stoi(result);
     }
 
 private:    
     std::array<int64_t, 2> _input_shape{ 1, 784 };       
     Ort::Env env;
-    Ort::Session session{ env, L"random_forest_model.onnx", Ort::SessionOptions{nullptr} };
+    Ort::Session session{ env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx", Ort::SessionOptions{nullptr} };
 };
 
 
@@ -85,6 +97,9 @@ int main(int argc, char **argv)
 
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
+    ImFont* font1 = io.Fonts->AddFontDefault();
+    ImFont* font2 = io.Fonts->AddFontDefault();
+    font2->Scale *= 4;
 
     ImGui::StyleColorsDark();
 
@@ -109,6 +124,8 @@ int main(int argc, char **argv)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
         {
+            static int prediction = -1;
+
             ImGui::Begin("Canvas");
             {
                 static ImVector<ImVec2> points;
@@ -159,20 +176,25 @@ int main(int argc, char **argv)
                     cv::Mat scaled_image;
                     cv::resize(image, scaled_image, cv::Size(28, 28), cv::INTER_AREA);
 
-                    cv::imwrite("C:/dev/pydata_2021/src/scripts/test.bmp", scaled_image);
                     digits_input input_image;
                     int idx = 0;
                     for (auto it = scaled_image.begin<uchar>(); it != scaled_image.end<uchar>(); ++it, ++idx)
                         input_image[idx] = float(*it);
                     
-                    //std::transform(image.begin<uchar>(), image.end<uchar>(), input_image.begin(), [](auto x) { return (float)(x / 255.0); });
-
-                    rf_model.infer(input_image);
+                    prediction = rf_model.infer(input_image);
                 }
 
                 if (clear)
                     points.clear();
 
+            }
+            ImGui::End();
+
+            ImGui::Begin("Prediction");
+            {                
+                ImGui::PushFont(font2);
+                ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", prediction);
+                ImGui::PopFont();
             }
             ImGui::End();
         }
