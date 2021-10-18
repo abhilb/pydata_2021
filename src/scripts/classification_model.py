@@ -44,6 +44,10 @@ class ClassificationModel(ABC):
     def to_onnx(self, model_path: Path):
         pass
 
+    @abstractmethod
+    def to_treelite(self, lib_path: Path):
+        pass
+
     def get_random_image(self):
         idx = random.randint(0, self.y_test.shape[0])
         img = np.reshape(self.X_test[idx], (28, 28))

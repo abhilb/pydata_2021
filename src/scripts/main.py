@@ -4,6 +4,7 @@ from random_forest.model import RandomForestModel
 from svm.model import SVMClassifierModel
 from pathlib import Path
 import logging
+import os
 
 logging.basicConfig()
 logger = logging.getLogger("DemoApp")
@@ -22,6 +23,11 @@ def main():
     random_forest_model.create_model()
     logger.info(f"Random Forest Model Score: {random_forest_model.get_score()}")
     random_forest_model.to_onnx(Path.cwd() / "onnx_models" / "random_forest_model.onnx")
+
+    lib_ext = ".dll" if os.name == "nt" else ".so"
+    random_forest_model.to_treelite(
+        lib_path=Path.cwd() / f"random_forest_model{lib_ext}"
+    )
 
     logger.info("SVM Classifier Model")
     svm_model = SVMClassifierModel()

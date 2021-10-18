@@ -27,3 +27,6 @@ class SVMClassifierModel(ClassificationModel):
             f.write(onx.SerializeToString())
 
         return super().to_onnx(model_path)
+
+    def to_treelite(self, lib_path: Path):
+        return super().to_treelite(lib_path)
