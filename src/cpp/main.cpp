@@ -172,20 +172,24 @@ int main(int argc, char **argv)
                     cv::Mat image = cv::Mat(canvas_sz.y, canvas_sz.x, CV_8UC1, cv::Scalar(0));
                     spdlog::info("Image size: {}, {}", image.rows, image.cols);
                     for (int n = 0; n < points.Size; n++)
-                        cv::circle(image, cv::Point(points[n].x, points[n].y), 15.0, cv::Scalar(255), -1);
+                        cv::circle(image, cv::Point(points[n].x, points[n].y), 20.0, cv::Scalar(255), -1);
                     cv::Mat scaled_image;
                     cv::resize(image, scaled_image, cv::Size(28, 28), cv::INTER_AREA);
-
+                    
                     digits_input input_image;
                     int idx = 0;
                     for (auto it = scaled_image.begin<uchar>(); it != scaled_image.end<uchar>(); ++it, ++idx)
                         input_image[idx] = float(*it / 255.0);
                     
                     prediction = rf_model.infer(input_image);
+                    //cv::imwrite(std::to_string(prediction) + ".bmp", scaled_image);
                 }
 
                 if (clear)
+                {
                     points.clear();
+                    prediction = -1;
+                }
 
             }
             ImGui::End();
@@ -193,7 +197,11 @@ int main(int argc, char **argv)
             ImGui::Begin("Prediction");
             {                
                 ImGui::PushFont(font2);
-                ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", prediction);
+                if (prediction >= 0)
+                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", prediction);
+                else
+                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "<EMPTY>");
+
                 ImGui::PopFont();
             }
             ImGui::End();
