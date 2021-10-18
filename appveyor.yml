@@ -28,6 +28,8 @@ before_build:
     %DEPENDS% copy sdl_config\* %SDL2_DIR%
     
 - cmd: |-
+    echo %SDL2_DIR%
+    dir %SDL2_DIR%
     cd src
     cd cpp
     mkdir build
