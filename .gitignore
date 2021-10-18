@@ -7,3 +7,5 @@
 .clj-kondo/
 
 **/.vscode/
+
+src/cpp/build
