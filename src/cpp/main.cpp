@@ -179,7 +179,7 @@ int main(int argc, char **argv)
                     digits_input input_image;
                     int idx = 0;
                     for (auto it = scaled_image.begin<uchar>(); it != scaled_image.end<uchar>(); ++it, ++idx)
-                        input_image[idx] = float(*it);
+                        input_image[idx] = float(*it / 255.0);
                     
                     prediction = rf_model.infer(input_image);
                 }
