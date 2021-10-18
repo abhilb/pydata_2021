@@ -1,14 +1,57 @@
+
+// std includes
+#include <array>
+#include <string>
+#include <algorithm>
+
+// onnx includes
+#include <onnxruntime_cxx_api.h>
+
+// sdl includes
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+// imgui includes
 #include "imgui.h"
 #include "imgui_impl_opengl2.h"
 #include "imgui_impl_sdl.h"
 #include "spdlog/spdlog.h"
 
+// opencv includes
 #include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
+
+using digits_input = std::array<float, 784>;
+
+struct Digits_Random_Forest_Onnx
+{
+    Digits_Random_Forest_Onnx()
+    {
+        
+    }
+
+    int infer(digits_input& input)
+    {
+        std::vector<const char*> input_names = { "float_input" };
+        std::vector<const char*> output_names = { "output_label" };
+                
+        Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);     
+        auto input_size = input.size();
+        auto input_tensor = Ort::Value::CreateTensor<float>(info, const_cast<float*>(input.data()), input_size, _input_shape.data(), _input_shape.size());
+        Ort::Value output_tensor{ nullptr };
+
+        session.Run(Ort::RunOptions{ nullptr }, input_names.data(), &input_tensor, 1, output_names.data(), &output_tensor, 1);
+        
+        return 0;
+    }
+
+private:    
+    std::array<int64_t, 2> _input_shape{ 1, 784 };       
+    Ort::Env env;
+    Ort::Session session{ env, L"random_forest_model.onnx", Ort::SessionOptions{nullptr} };
+};
+
 
 int main(int argc, char **argv)
 {
@@ -17,6 +60,8 @@ int main(int argc, char **argv)
         spdlog::error("Error: {}\n", SDL_GetError());
         return -1;
     }
+
+    Digits_Random_Forest_Onnx rf_model;
 
     // Setup window
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -45,9 +90,7 @@ int main(int argc, char **argv)
 
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL2_Init();
-
-    spdlog::info("Start...");
-
+    
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     bool done = false;
     while (!done) {
@@ -103,17 +146,28 @@ int main(int argc, char **argv)
                 draw_list->PushClipRect(canvas_p0, canvas_p1, true);
                 
                 for (int n = 0; n < points.Size; n++)
-                    draw_list->AddCircle(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 1.0, IM_COL32(0, 255, 0, 255), 0, 10.0f);
+                    draw_list->AddCircle(ImVec2(origin.x + points[n].x, origin.y + points[n].y), 1.0, IM_COL32(0, 255, 0, 255), 0, 20.0f);
 
                 draw_list->PopClipRect();                                                
 
                 if(predict)
                 {
-                    cv::Mat image = cv::Mat(canvas_sz.y, canvas_sz.x, CV_8UC1, cv::Scalar(255));
+                    cv::Mat image = cv::Mat(canvas_sz.y, canvas_sz.x, CV_8UC1, cv::Scalar(0));
                     spdlog::info("Image size: {}, {}", image.rows, image.cols);
                     for (int n = 0; n < points.Size; n++)
-                        cv::circle(image, cv::Point(points[n].x, points[n].y), 1.0, cv::Scalar(0), 10);
-                    cv::imwrite("image.png", image);
+                        cv::circle(image, cv::Point(points[n].x, points[n].y), 15.0, cv::Scalar(255), -1);
+                    cv::Mat scaled_image;
+                    cv::resize(image, scaled_image, cv::Size(28, 28), cv::INTER_AREA);
+
+                    cv::imwrite("C:/dev/pydata_2021/src/scripts/test.bmp", scaled_image);
+                    digits_input input_image;
+                    int idx = 0;
+                    for (auto it = scaled_image.begin<uchar>(); it != scaled_image.end<uchar>(); ++it, ++idx)
+                        input_image[idx] = float(*it);
+                    
+                    //std::transform(image.begin<uchar>(), image.end<uchar>(), input_image.begin(), [](auto x) { return (float)(x / 255.0); });
+
+                    rf_model.infer(input_image);
                 }
 
                 if (clear)
