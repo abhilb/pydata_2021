@@ -24,10 +24,8 @@ before_build:
 - |-
     %DEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.16-VC.zip    
     %DEPENDS% 7z x SDL2-devel-2.0.16-VC.zip > nul
-    %DEPENDS% copy SDL2-devel-2.0.16\%ARCH%\include\SDL2\* %SDL2_DIR%\include\SDL2 > nul
-    %DEPENDS% copy SDL2-devel-2.0.16\%ARCH%\lib\*.a %SDL2_DIR%\lib > nul
-    %DEPENDS% copy SDL2-devel-2.0.16\%ARCH%\bin\*.dll %SDL2_DIR%\lib > nul
-
+    %DEPENDS% copy SDL2-devel-2.0.16\* %SDL2_DIR% > nul
+    
 - cmd: |-
     cd src
     cd cpp
