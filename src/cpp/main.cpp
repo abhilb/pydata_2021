@@ -27,8 +27,9 @@ using digits_input = std::array<float, 784>;
 
 struct DigitsModel
 {
-    DigitsModel(Ort::Env& env, const ORTCHAR_T* model_path) :
-        _session(env, model_path, Ort::SessionOptions{ nullptr })
+    DigitsModel(Ort::Env& env, const ORTCHAR_T* model_path, std::vector<const char*>&& output_names) :
+        _session(env, model_path, Ort::SessionOptions{ nullptr }),
+        _output_names(std::move(output_names))
     {        
     }
 
@@ -52,7 +53,7 @@ private:
     std::array<int64_t, 2> _input_shape{ 1, 784 };
     Ort::Session _session;
     std::vector<const char*> _input_names = { "float_input" };
-    std::vector<const char*> _output_names = { "output_label" , "output_probability" };
+    std::vector<const char*> _output_names; 
 };
 
 
@@ -65,8 +66,10 @@ int main(int argc, char **argv)
     }
 
     Ort::Env env;
-    DigitsModel rf_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx");
-    DigitsModel lr_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/log_reg_model.onnx");
+    //@todo change full paths to relative paths
+    DigitsModel rf_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx", { "output_label" , "output_probability" });
+    DigitsModel lr_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/log_reg_model.onnx", { "output_label" , "output_probability" });
+    DigitsModel svm_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/svm_model.onnx", { "label" , "probabilities" });
 
     // Setup window
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -119,6 +122,7 @@ int main(int argc, char **argv)
         {
             static int rf_prediction = -1;
             static int lr_prediction = -1;
+            static int svm_prediction = -1;
 
             ImGui::Begin("Canvas");
             {
@@ -177,6 +181,7 @@ int main(int argc, char **argv)
                     
                     rf_prediction = rf_model.infer(input_image);
                     lr_prediction = lr_model.infer(input_image);
+                    svm_prediction = svm_model.infer(input_image);
                     //cv::imwrite(std::to_string(prediction) + ".bmp", scaled_image);
                 }
 
@@ -185,21 +190,39 @@ int main(int argc, char **argv)
                     points.clear();
                     rf_prediction = -1;
                     lr_prediction = -1;
+                    svm_prediction = -1;
                 }
 
             }
             ImGui::End();
 
-            ImGui::Begin("Prediction");
+            ImGui::Begin("Prediction - ONNX Random Forest");
             {                
                 ImGui::PushFont(font2);
                 if (rf_prediction >= 0)
-                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", rf_prediction);                
-                if (lr_prediction >= 0)
-                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", lr_prediction);                
+                    ImGui::TextColored(ImVec4{ 1.0, 1.0, 0.0, 1.0 }, "%i", rf_prediction);
                 ImGui::PopFont();
             }
             ImGui::End();
+
+            ImGui::Begin("Prediction - ONNX Logistic Regression");
+            {
+                ImGui::PushFont(font2);
+                if (lr_prediction >= 0)
+                    ImGui::TextColored(ImVec4{ 1.0, 0.0, 1.0, 1.0 }, "%i", lr_prediction);
+                ImGui::PopFont();
+            }
+            ImGui::End();
+
+            ImGui::Begin("Prediction - ONNX SVM");
+            {
+                ImGui::PushFont(font2);
+                if (svm_prediction >= 0)
+                    ImGui::TextColored(ImVec4{ 0.0, 1.0, 1.0, 1.0 }, "%i", svm_prediction);
+                ImGui::PopFont();
+            }
+            ImGui::End();
+
         }
 
         // Rendering
