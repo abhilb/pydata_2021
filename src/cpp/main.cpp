@@ -25,9 +25,9 @@
 
 using digits_input = std::array<float, 784>;
 
-struct Digits_Random_Forest_Onnx
+struct DigitsModel
 {
-    Digits_Random_Forest_Onnx(Ort::Env& env, const ORTCHAR_T* model_path) :
+    DigitsModel(Ort::Env& env, const ORTCHAR_T* model_path) :
         _session(env, model_path, Ort::SessionOptions{ nullptr })
     {        
     }
@@ -65,7 +65,8 @@ int main(int argc, char **argv)
     }
 
     Ort::Env env;
-    Digits_Random_Forest_Onnx rf_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx");
+    DigitsModel rf_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx");
+    DigitsModel lr_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/log_reg_model.onnx");
 
     // Setup window
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -91,7 +92,7 @@ int main(int argc, char **argv)
     (void)io;
     ImFont* font1 = io.Fonts->AddFontDefault();
     ImFont* font2 = io.Fonts->AddFontDefault();
-    font2->Scale *= 4;
+    font2->Scale *= 10;
 
     ImGui::StyleColorsDark();
 
@@ -116,7 +117,8 @@ int main(int argc, char **argv)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
         {
-            static int prediction = -1;
+            static int rf_prediction = -1;
+            static int lr_prediction = -1;
 
             ImGui::Begin("Canvas");
             {
@@ -173,14 +175,16 @@ int main(int argc, char **argv)
                     for (auto it = scaled_image.begin<uchar>(); it != scaled_image.end<uchar>(); ++it, ++idx)
                         input_image[idx] = float(*it / 255.0);
                     
-                    prediction = rf_model.infer(input_image);
+                    rf_prediction = rf_model.infer(input_image);
+                    lr_prediction = lr_model.infer(input_image);
                     //cv::imwrite(std::to_string(prediction) + ".bmp", scaled_image);
                 }
 
                 if (clear)
                 {
                     points.clear();
-                    prediction = -1;
+                    rf_prediction = -1;
+                    lr_prediction = -1;
                 }
 
             }
@@ -189,11 +193,10 @@ int main(int argc, char **argv)
             ImGui::Begin("Prediction");
             {                
                 ImGui::PushFont(font2);
-                if (prediction >= 0)
-                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", prediction);
-                else
-                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "<EMPTY>");
-
+                if (rf_prediction >= 0)
+                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", rf_prediction);                
+                if (lr_prediction >= 0)
+                    ImGui::TextColored(ImVec4{ 1.0, 0, 0, 1.0 }, "%i", lr_prediction);                
                 ImGui::PopFont();
             }
             ImGui::End();
