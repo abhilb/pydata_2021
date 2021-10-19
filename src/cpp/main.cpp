@@ -27,27 +27,17 @@ using digits_input = std::array<float, 784>;
 
 struct Digits_Random_Forest_Onnx
 {
-    Digits_Random_Forest_Onnx()
-    {
-        
+    Digits_Random_Forest_Onnx(Ort::Env& env, const ORTCHAR_T* model_path) :
+        _session(env, model_path, Ort::SessionOptions{ nullptr })
+    {        
     }
 
     int infer(digits_input& input)
-    {
-        std::vector<const char*> input_names = { "float_input" };
-        std::vector<const char*> output_names = { "output_label" , "output_probability" };
-                
-        Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);     
-        auto input_size = input.size();
-        auto input_tensor = Ort::Value::CreateTensor<float>(info, const_cast<float*>(input.data()), input_size, _input_shape.data(), _input_shape.size());
+    {                
+        Ort::MemoryInfo info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);
+        auto input_tensor = Ort::Value::CreateTensor<float>(info, const_cast<float*>(input.data()), input.size(), _input_shape.data(), _input_shape.size());
 
-        spdlog::info("Output tensor count: {}", session.GetOutputCount());
-
-        Ort::AllocatorWithDefaultOptions allocator;
-        spdlog::info("Output tensor[0] name: {}", session.GetOutputName(0, allocator));
-        spdlog::info("Output tensor[1] name: {}", session.GetOutputName(1, allocator));
-
-        std::vector<Ort::Value> ort_outputs = session.Run(Ort::RunOptions{ nullptr }, input_names.data(), &input_tensor, 1, output_names.data(), 2);
+        std::vector<Ort::Value> ort_outputs = _session.Run(Ort::RunOptions{ nullptr }, _input_names.data(), &input_tensor, 1, _output_names.data(), 2);
         
         auto type_info = ort_outputs[0].GetTensorTypeAndShapeInfo();
         auto data_length = ort_outputs[0].GetStringTensorDataLength();
@@ -59,9 +49,10 @@ struct Digits_Random_Forest_Onnx
     }
 
 private:    
-    std::array<int64_t, 2> _input_shape{ 1, 784 };       
-    Ort::Env env;
-    Ort::Session session{ env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx", Ort::SessionOptions{nullptr} };
+    std::array<int64_t, 2> _input_shape{ 1, 784 };
+    Ort::Session _session;
+    std::vector<const char*> _input_names = { "float_input" };
+    std::vector<const char*> _output_names = { "output_label" , "output_probability" };
 };
 
 
@@ -73,7 +64,8 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    Digits_Random_Forest_Onnx rf_model;
+    Ort::Env env;
+    Digits_Random_Forest_Onnx rf_model(env, L"C:/dev/pydata_2021/src/models/onnx_models/random_forest_model.onnx");
 
     // Setup window
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
