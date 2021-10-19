@@ -10,6 +10,9 @@
 ### C++ App
 [![Build status](https://ci.appveyor.com/api/projects/status/t4wo7jnjl25aea07?svg=true)](https://ci.appveyor.com/project/abhilb/pydata-2021)
 
+### Screenshot
+![Logistic Regression ONNX graph](src/assets/screenshot.gif)
+
 ### ONNX models
 #### Logistic Regression
 ![Logistic Regression ONNX graph](src/assets/log_reg_model.onnx.png)
