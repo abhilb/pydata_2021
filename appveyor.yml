@@ -18,14 +18,14 @@ init:
 - echo %generator%
 
 before_build:
-- |-
-- set SDL2_DIR=c:\sdl
+- cmd: |-
+    mkdir c:\sdl
 
 - |-
     %DEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.16-VC.zip    
     %DEPENDS% 7z x SDL2-devel-2.0.16-VC.zip -otmp
-    %DEPENDS% copy tmp\SDL2-2.0.16\* %SDL2_DIR%
-    %DEPENDS% copy sdl_config\* %SDL2_DIR%
+    %DEPENDS% copy tmp\SDL2-2.0.16\* %SDL2_DIR%\
+    %DEPENDS% copy sdl_config\* %SDL2_DIR%\
     
 - cmd: |-
     echo %SDL2_DIR%
