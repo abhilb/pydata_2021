@@ -55,7 +55,7 @@ after_build:
 - dir %CD%
 - copy %SDL2_DIR%\lib\x64\SDL2.dll Release\
 - copy %OPENCV_DIR%\x64\vc15\bin\*.dll Release\
-- copy %ONNX_MODELS_PATH%\*.onnx Relase\
+- copy %ONNX_MODELS_PATH%\*.onnx Release\
 - echo %VERSION%
 - 7z a DigitsDemo.zip Release\*
 
