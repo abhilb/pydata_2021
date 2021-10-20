@@ -29,6 +29,7 @@ before_build:
     set OPENCV_DIR=C:\tools\opencv\build
     %DEPENDS% appveyor DownloadFile https://github.com/microsoft/onnxruntime/releases/download/v1.9.0/onnxruntime-win-x64-1.9.0.zip
     %DEPENDS% 7z x onnxruntime-win-x64-1.9.0.zip -osrc/cpp/    
+    set ONNX_MODELS_PATH=%cd%\src\models\onnx_models
         
 - cmd: |-
     echo %SDL2_DIR%
@@ -54,8 +55,9 @@ after_build:
 - dir %CD%
 - copy %SDL2_DIR%\lib\x64\SDL2.dll Release\
 - copy %OPENCV_DIR%\x64\vc15\bin\*.dll Release\
+- copy %ONNX_MODELS_PATH%\*.onnx Relase\
 - echo %VERSION%
-- 7z a Release\* DigitsDemo.zip
+- 7z a DigitsDemo.zip Release\*
 
 artifacts:
 - path: DigitsDemo.zip
