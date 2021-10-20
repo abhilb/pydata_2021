@@ -60,11 +60,11 @@ after_build:
 - 7z a DigitsDemo.zip Release\*
 
 artifacts:
-- path: DigitsDemo.zip
+- path: src/cpp/build/DigitsDemo.zip
   
 deploy:
   - provider: GitHub
-    artifact: DigitsDemo.zip           # upload all NuGet packages to release assets
+    artifact: src/cpp/build/DigitsDemo.zip           # upload all NuGet packages to release assets
     draft: false
     prerelease: false
     on:
