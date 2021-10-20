@@ -48,3 +48,22 @@ build:
   project: src/cpp/build/DigitsDemo.sln
   verbosity: minimal
   parallel: true    
+  
+after_build:
+- echo %CD%
+- cp %SDL2_DIR%\lib\x64\*.dll Release
+- cp %OPENCV_DIR%\x64\vc15\bin\*.dll Release
+- echo %VERSION%
+- 7z a Release\* DigitsDemo.zip
+
+artifacts:
+- path: DigitsDemo.zip
+  
+deploy:
+  - provider: GitHub
+    artifact: DigitsDemo.zip           # upload all NuGet packages to release assets
+    draft: false
+    prerelease: false
+    on:
+      branch: master                # release from master branch only
+      APPVEYOR_REPO_TAG: true       # deploy on tag push only
