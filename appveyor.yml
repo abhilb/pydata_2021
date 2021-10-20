@@ -17,12 +17,16 @@ init:
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 16 2019%arch%" )
 - echo %generator%
 
+install:
+- cmd: choco install OpenCV -y -version 4.5.3
+
 before_build:
 - |-
     %DEPENDS% appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.16-VC.zip    
     %DEPENDS% 7z x SDL2-devel-2.0.16-VC.zip -oSDL2
     %DEPENDS% copy sdl_config\* SDL2\SDL2-2.0.16\
     set SDL2_DIR=%cd%\SDL2\SDL2-2.0.16
+    set OPENCV_DIR=C:\tools\opencv\build
     
 - cmd: |-
     echo %SDL2_DIR%
