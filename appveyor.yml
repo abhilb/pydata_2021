@@ -27,6 +27,9 @@ before_build:
     %DEPENDS% copy sdl_config\* SDL2\SDL2-2.0.16\
     set SDL2_DIR=%cd%\SDL2\SDL2-2.0.16
     set OPENCV_DIR=C:\tools\opencv\build
+    %DEPENDS% appveyor DownloadFile https://github.com/microsoft/onnxruntime/releases/download/v1.9.0/onnxruntime-win-x64-1.9.0.zip
+    %DEPENDS% 7z x onnxruntime-win-x64-1.9.0.zip -osrc/cpp/    
+    %DEPENDS% move src/cpp/onnxruntime* src/cpp/onnxruntime
     
 - cmd: |-
     echo %SDL2_DIR%
@@ -37,7 +40,7 @@ before_build:
     mkdir build
     cd build
     cmake --version
-    cmake .. -G %generator%
+    cmake .. -G %generator% -DONNXRUNTIME_ROOTDIR=%CD%/src/cpp/onnxruntime
 
 build:
   project: src/cpp/build/DigitsDemo.sln
