@@ -51,6 +51,9 @@ build:
   
 after_build:
 - echo %CD%
+- dir %SDL2_DIR%
+- dir %SDL2_DIR%\lib
+- dir %SDL2_DIR%\lib\x64
 - cp %SDL2_DIR%\lib\x64\*.dll Release
 - cp %OPENCV_DIR%\x64\vc15\bin\*.dll Release
 - echo %VERSION%
