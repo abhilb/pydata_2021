@@ -33,6 +33,7 @@ before_build:
     dir %SDL2_DIR%
     cd src
     cd cpp
+    git submodule update --init --recursive
     mkdir build
     cd build
     cmake --version
