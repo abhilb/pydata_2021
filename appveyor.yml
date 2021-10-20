@@ -40,6 +40,6 @@ before_build:
     cmake .. -G %generator%
 
 build:
-  project: DigitsDemo.sln
+  project: build/DigitsDemo.sln
   verbosity: minimal
   parallel: true    
