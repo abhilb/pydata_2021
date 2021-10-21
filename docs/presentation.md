@@ -9,7 +9,7 @@ author: Abhilash Babu
   * Available Options
   * Pros and Cons
 * Demo
-![Screenshot](../src/assets/screenshot.gif)
+![Screenshot](../src/assets/screenshot.png){height=50%}
 
 ---
 
@@ -30,7 +30,7 @@ author: Abhilash Babu
 ---
 
 # ONNX
-
+![Screenshot](../src/assets/onnx_code.png)
 ---
 
 # PMML
