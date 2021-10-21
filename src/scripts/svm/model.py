@@ -1,19 +1,17 @@
 from classification_model import ClassificationModel
 from pathlib import Path
 
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn import svm
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
-from sklearn.pipeline import make_pipeline
-
 
 class SVMClassifierModel(ClassificationModel):
     def create_model(self):
-        self.model = make_pipeline(
-            StandardScaler(), svm.SVC(decision_function_shape="ovo")
-        )
-        self.model.fit(self.X_train, self.y_train)
+        self.model = svm.SVC(decision_function_shape="ovo")
+        scaler = MinMaxScaler()
+        X = scaler.fit_transform(self.X_train)
+        self.model.fit(X, self.y_train)
         return super().create_model()
 
     def get_score(self) -> float:
