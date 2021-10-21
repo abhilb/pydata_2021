@@ -16,7 +16,7 @@ init:
 - echo %APPVEYOR_BUILD_WORKER_IMAGE%
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 16 2019%arch%" )
 - echo %generator%
-
+   
 install:
 - cmd: choco install OpenCV -y -version 4.5.3
 
@@ -64,6 +64,9 @@ artifacts:
   
 deploy:
   - provider: GitHub
+    auth_token:
+      secure: zpjN8eGGNYIYn5YgqTdjTyG/yE8JuAnSh+KgWRuQCL4jIu4T85dYjDsS52m8VnGG
+    release: DigitsDemo-v$(APPVEYOR_BUILD_VERSION)
     artifact: src/cpp/build/DigitsDemo.zip           # upload all NuGet packages to release assets
     draft: false
     prerelease: false
