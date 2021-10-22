@@ -19,6 +19,7 @@ init:
    
 install:
 - cmd: choco install OpenCV -y -version 4.5.3
+- cmd: choco install pandoc
 
 before_build:
 - |-
@@ -58,6 +59,8 @@ after_build:
 - copy %ONNX_MODELS_PATH%\*.onnx Release\
 - echo %VERSION%
 - 7z a DigitsDemo.zip Release\*
+- cd ..\..\..\docs
+- pandoc -t beamer presentation.md -V theme:Warsaw -o presentation.pdf
 
 artifacts:
 - path: src/cpp/build/DigitsDemo.zip
