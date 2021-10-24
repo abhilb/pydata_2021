@@ -35,3 +35,6 @@ class LogisticRegresssionModel(ClassificationModel):
 
     def to_treelite(self, lib_path: Path):
         return super().to_treelite(lib_path)
+
+    def to_pmml(self, file_path: Path):
+        return super().to_pmml(file_path)

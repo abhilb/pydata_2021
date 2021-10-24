@@ -5,8 +5,8 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
-from sklearn.pipeline import make_pipeline
-
+from sklearn2pmml import sklearn2pmml
+from sklearn2pmml.pipeline import PMMLPipeline
 import treelite.sklearn
 
 
@@ -38,3 +38,39 @@ class RandomForestModel(ClassificationModel):
             params={"parallel_comp": 8},
             verbose=True,
         )
+
+    def to_pmml(self, file_path: Path):
+        raise NotImplementedError("Not implemented")
+
+
+class RandomForestPmmlModel(ClassificationModel):
+    def create_model(self):
+        self.model = PMMLPipeline(
+            [
+                (
+                    "classifier",
+                    RandomForestClassifier(
+                        n_estimators=20,
+                        max_depth=None,
+                        min_samples_split=2,
+                        random_state=0,
+                    ),
+                ),
+            ]
+        )
+        scaler = MinMaxScaler()
+        X = scaler.fit_transform(self.X_train)
+        self.model.fit(X, self.y_train)
+        return super().create_model()
+
+    def get_score(self) -> float:
+        return super().get_score()
+
+    def to_onnx(self, model_path: Path):
+        raise NotImplementedError("Not implemented")
+
+    def to_treelite(self, lib_path: Path):
+        raise NotImplementedError("Not implemented")
+
+    def to_pmml(self, file_path: Path):
+        sklearn2pmml(self.model, str(file_path), with_repr=True)
