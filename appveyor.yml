@@ -19,7 +19,6 @@ init:
    
 install:
 - cmd: choco install OpenCV -y -version 4.5.3
-- cmd: choco install pandoc miktex
 
 before_build:
 - |-
