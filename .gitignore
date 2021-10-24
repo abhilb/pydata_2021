@@ -9,3 +9,4 @@
 **/.vscode/
 
 src/cpp/build
+src/build
