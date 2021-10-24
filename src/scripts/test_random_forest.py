@@ -3,8 +3,7 @@ import onnxruntime as ort
 import imageio
 import numpy as np
 import pytest
-
-from sklearn.preprocessing import StandardScaler
+from random_forest.model import RandomForestModel
 
 
 @pytest.fixture
@@ -30,5 +29,12 @@ def test_random_forest_pred(capsys, input_image):
     label_name = sess.get_outputs()[0].name
     probs_name = sess.get_outputs()[1].name
     preds, _ = sess.run([label_name, probs_name], {input_name: input_image})
-    
-    assert preds[0] == '0'
+
+    assert preds[0] == "0"
+
+
+def test_pmml():
+    model = RandomForestModel()
+    model.create_model()
+    with pytest.raises(Exception) as e_info:
+        model.to_pmml()
