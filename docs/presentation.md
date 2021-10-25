@@ -18,17 +18,32 @@ author: Abhilash Babu
 # Available Options
 
 * Use an intermediate format
-  * From the scikit-learn documentation
+  * Model persistence options in scikit-learn.
     * ONNX
     * PMML
+  
+* ONNX
+  * Use ONNX Runtime for inference
+  * Focus of this presentation
+* PMML 
+  * Use cPMML library for inference
+  * Not being actively developed
 
-* Use the same underlying library that scikit learn uses
-  * liblinear
-  * libsvm
+---
 
-* Other options
+# Other Options
+* Convert the model into a library.
   * treelite
-
+    * Converts Tree based models to shared library.
+    * Works only with tree based algorithms
+* Use the same underlying library that scikit learn uses
+  * liblinear or libsvm
+    * No direct mapping available
+    * Works only with logistic regression and SVM   
+* Call python interpreter from C++
+  * Use libraries like pybind11, swig etc. 
+    * Possible loss of performance in conversion between data types of C++ and Python
+  
 ---
 
 # ONNX
@@ -41,7 +56,7 @@ author: Abhilash Babu
 ---
 
 # ONNX
-![Screenshot](../src/assets/onnx_code.png){width=75%}
+![Screenshot](../src/assets/onnx_code.png)
 
 ---
 
@@ -70,7 +85,7 @@ author: Abhilash Babu
 
 # Treelite
 * Definition from the website
-  * **Treelite is a model compiler for decision tree ensembles, aimed at efficient deployment.**
+  * Treelite is a model compiler for decision tree ensembles, aimed at efficient deployment.
   * Treelite overview
     ![Treelite overvivew](../src/assets/treelite_internals.png)
 
@@ -82,8 +97,9 @@ author: Abhilash Babu
 ---
 
 # Resources
-* [https://github.com/abhilb/pydata_2021](https://github.com/abhilb/pydata_2021)
-* [https://onnxruntime.ai/](https://onnxruntime.ai/)
-* [https://onnx.ai/](https://onnx.ai/)
-* [https://treelite.readthedocs.io/en/latest/](https://treelite.readthedocs.io/en/latest/)
-* [http://dmg.org/pmml/v4-4-1/GeneralStructure.html](http://dmg.org/pmml/v4-4-1/GeneralStructure.html)
+* [Demo code and slides: https://github.com/abhilb/pydata_2021](https://github.com/abhilb/pydata_2021)
+* [ONNX Runtime: https://onnxruntime.ai/](https://onnxruntime.ai/)
+* [ONNX: https://onnx.ai/](https://onnx.ai/)
+* [Treelite: https://treelite.readthedocs.io/en/latest/](https://treelite.readthedocs.io/en/latest/)
+* [PMML Spec: http://dmg.org/pmml/v4-4-1/GeneralStructure.html](http://dmg.org/pmml/v4-4-1/GeneralStructure.html)
+* [sklearn2pmml: https://github.com/jpmml/sklearn2pmml](https://github.com/jpmml/sklearn2pmml)
