@@ -3,7 +3,8 @@
 
 .venv/
 .winenv/
-
+.lsp/
+.lsp/.cache
 .clj-kondo/
 
 **/.vscode/
