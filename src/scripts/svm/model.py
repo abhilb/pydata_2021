@@ -6,6 +6,7 @@ from sklearn import svm
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 
+
 class SVMClassifierModel(ClassificationModel):
     def create_model(self):
         self.model = svm.SVC(decision_function_shape="ovo")
@@ -28,3 +29,6 @@ class SVMClassifierModel(ClassificationModel):
 
     def to_treelite(self, lib_path: Path):
         return super().to_treelite(lib_path)
+
+    def to_pmml(self, file_path: Path):
+        return super().to_pmml(file_path)
