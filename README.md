@@ -10,13 +10,9 @@
 ### C++ App
 [![Build status](https://ci.appveyor.com/api/projects/status/t4wo7jnjl25aea07?svg=true)](https://ci.appveyor.com/project/abhilb/pydata-2021)
 
-### Screenshot
+### Slides 
+[Presentation](docs/presentation.pdf)
+
+### Demo 
 ![Screenshot](src/assets/screenshot.gif)
 
-### ONNX models
-#### Logistic Regression
-![Logistic Regression ONNX graph](src/assets/log_reg_model.onnx.png)
-#### SVM 
-![SVN Model ONNX graph](src/assets/svm_model.onnx.png)
-#### Random Forest
-![Random Forest ONNX graph](src/assets/random_forest_model.onnx.png)
