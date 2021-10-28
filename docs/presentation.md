@@ -36,6 +36,9 @@ author: Abhilash Babu
   * treelite
     * Converts Tree based models to shared library.
     * Works only with tree based algorithms
+  * Hummingbird
+    * Compiles trained traditional ML models into tensor computations.
+    * Works with tree based algorithms
 * Use the same underlying library that scikit learn uses
   * liblinear or libsvm
     * No direct mapping available
@@ -96,6 +99,22 @@ author: Abhilash Babu
 
 ---
 
+
+# Hummingbird
+* Hummingbird is a library for compiling trained traditional ML models into tensor computations
+* Benefits
+  * Leverage optimizations implemented in neural network frameworks
+  * Gives native hardware acceleration
+  * Both traditional and neural network models use same framework
+* Support conversion of sklearn models to Pytorch, ONNX and TVM.
+
+
+---
+
+
+# Hummingbird example
+![Hummingbird code](../src/assets/humming_bird.png)
+
 # Resources
 * [Demo code and slides: https://github.com/abhilb/pydata_2021](https://github.com/abhilb/pydata_2021)
 * [ONNX Runtime: https://onnxruntime.ai/](https://onnxruntime.ai/)
@@ -103,3 +122,4 @@ author: Abhilash Babu
 * [Treelite: https://treelite.readthedocs.io/en/latest/](https://treelite.readthedocs.io/en/latest/)
 * [PMML Spec: http://dmg.org/pmml/v4-4-1/GeneralStructure.html](http://dmg.org/pmml/v4-4-1/GeneralStructure.html)
 * [sklearn2pmml: https://github.com/jpmml/sklearn2pmml](https://github.com/jpmml/sklearn2pmml)
+* [Hummingbird: https://github.com/microsoft/hummingbird](https://github.com/microsoft/hummingbird)
