@@ -59,7 +59,7 @@ author: Abhilash Babu
 ---
 
 # ONNX
-![Screenshot](../src/assets/onnx_code.png)
+![ONNX Inference code](../src/assets/onnx_code.png)
 
 ---
 
