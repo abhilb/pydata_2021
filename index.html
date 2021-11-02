@@ -10,7 +10,20 @@
 </head>
 <body>
     <div class="container-fluid">
-        <h1>Inference of Scikit-learn model in C++</h1>
+        <h1>Inference of scikit-learn models in C++</h1>
+    
+        <h2>Available options</h2>
+        <h3>Model persistence and inference libraries</h3>
+        <p>
+            According to scikit-learn documentation one can save a trained scikit-learn model onto disk in either ONNX format or PMMML format. The saved model can be then easily loaded back in to python for inference. But how can one use such a saved model in a C++ application. In the case of ONNX one could use ONNX runtime. Though loading models saved in PMML format have good support in Java. There aren't any good libraries in C++ that can load a PMML model.  
+        </p>
+        <h3>Converting models into machine code</h3>
+        <h3>Using libraries that scikit-learn uses under the hood</h3>
+        <h3>Embedding a python interpreter in C++</h3>
+        <h2>ONNX and ONNX runtime</h2>
+        <h3>Why ONNX?</h3>
+        <h2>Toy application</h2>
+        <p>I created a toy application to show how one can use ONNX runtime to do scikit-learn model inference in a C/C++ application</p>
         <img src="src/assets/screenshot.gif" alt="">
     </div>
     <!-- JavaScript Bundle with Popper -->
